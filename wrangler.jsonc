@@ -5,5 +5,18 @@
   "compatibility_flags": [
     "nodejs_compat"
   ],
-  "pages_build_output_dir": "dist"
+  "pages_build_output_dir": "dist",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "codistack-db",
+      "database_id": "3d039dfd-74b5-4645-948e-240a2f775034"
+    }
+  ],
+  "vars": {
+    "ADMIN_EMAIL": "admin@codistack.com",
+    "ADMIN_PASSWORD_HASH": "scrypt$312ab49e32848124b7fd571217333c20$30e60d0d62755ecf6f75f30774bf60ce423fd82f0fb4de919bd655c8709655b92b9b64c9fc9c0a6dff5124e8b51efa7b0d8454ac9fa3f620e1d97862344ad771",
+    "APP_SECRET": "b05e0152f4351e8a7b52eda97d68ccf2aa4e4653c5d8189eb96d72b4921c0cf0",
+    "NEXT_PUBLIC_SITE_URL": "https://codistack-website.pages.dev"
+  }
 }
