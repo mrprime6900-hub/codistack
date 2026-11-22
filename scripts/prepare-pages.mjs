@@ -23,7 +23,7 @@ if (fs.existsSync(path.join(appDir, "index.html"))) {
   fs.copyFileSync(path.join(appDir, "index.html"), path.join(dist, "index.html"));
 }
 
-for (const page of ["early-access", "privacy", "terms"]) {
+for (const page of ["early-access", "privacy", "terms", "admin", "admin/login"]) {
   const htmlFile = path.join(appDir, `${page}.html`);
   if (fs.existsSync(htmlFile)) {
     const pageDir = path.join(dist, page);
@@ -48,5 +48,10 @@ const headersContent = `/*
   Cross-Origin-Opener-Policy: same-origin
 `;
 fs.writeFileSync(path.join(dist, "_headers"), headersContent, "utf8");
+
+// 6. Ensure Cloudflare Pages Functions are also available at dist/functions if needed
+if (fs.existsSync("functions")) {
+  fs.cpSync("functions", path.join(dist, "functions"), { recursive: true });
+}
 
 console.log("Successfully prepared Cloudflare Pages distribution in /dist");

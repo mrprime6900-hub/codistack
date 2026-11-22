@@ -1,197 +1,243 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
-import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react";
+import { useEffect, useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import { ArrowRight } from "./Icons";
 
 const EASE = [0.2, 0.7, 0.2, 1] as const;
 
-const PLATES = [
-  { z: 0, label: "01 / INFRASTRUCTURE", tone: "from-deep/70 to-midnight/80" },
-  { z: 46, label: "02 / DATA", tone: "from-deep/60 to-midnight/70" },
-  { z: 92, label: "03 / LOGIC", tone: "from-electric/20 to-deep/60" },
-  { z: 138, label: "04 / INTERFACE", tone: "from-sky/30 to-electric/25" },
+const TELEMETRY_NODES = [
+  {
+    id: "01",
+    name: "CLOUDFLARE EDGE",
+    metric: "< 25ms TTFB",
+    status: "ACTIVE",
+    pos: "top-4 left-4 sm:top-8 sm:left-6",
+    accent: "border-sky/40 text-sky bg-sky/10",
+  },
+  {
+    id: "02",
+    name: "D1 DISTRIBUTED SQL",
+    metric: "0ms Cold Starts",
+    status: "SYNCED",
+    pos: "top-4 right-4 sm:top-8 sm:right-6",
+    accent: "border-electric/40 text-electric bg-electric/10",
+  },
+  {
+    id: "03",
+    name: "BILLINGHACKS OS",
+    metric: "Enterprise Core",
+    status: "BETA READY",
+    pos: "bottom-4 left-4 sm:bottom-8 sm:left-6",
+    accent: "border-violet/40 text-violet bg-violet/10",
+  },
+  {
+    id: "04",
+    name: "ZERO-TRUST GATEWAY",
+    metric: "HMAC & RLS",
+    status: "ENFORCED",
+    pos: "bottom-4 right-4 sm:bottom-8 sm:right-6",
+    accent: "border-emerald-400/40 text-emerald-400 bg-emerald-400/10",
+  },
 ];
 
-function GlassStack() {
+function CyberArchitectureCanvas() {
   const reduce = useReducedMotion();
-  const rx = useMotionValue(0);
-  const ry = useMotionValue(0);
-  const sx = useSpring(rx, { stiffness: 80, damping: 18 });
-  const sy = useSpring(ry, { stiffness: 80, damping: 18 });
+  const [pulse, setPulse] = useState(0);
 
   useEffect(() => {
-    if (reduce || !window.matchMedia("(pointer: fine)").matches) return;
-    const onMove = (e: PointerEvent) => {
-      const nx = e.clientX / window.innerWidth - 0.5;
-      const ny = e.clientY / window.innerHeight - 0.5;
-      ry.set(nx * 14);
-      rx.set(-ny * 10);
-    };
-    window.addEventListener("pointermove", onMove, { passive: true });
-    return () => window.removeEventListener("pointermove", onMove);
-  }, [reduce, rx, ry]);
+    if (reduce) return;
+    const interval = setInterval(() => {
+      setPulse((p) => (p + 1) % 4);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, [reduce]);
 
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-[460px] [perspective:1300px]" aria-hidden>
-      {/* ambient bloom */}
-      <div className="absolute left-1/2 top-1/2 size-[85%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-electric/25 blur-[90px]" />
+    <div className="relative mx-auto aspect-square w-full max-w-[500px]" aria-hidden="true">
+      {/* Dynamic ambient radial bloom */}
+      <div className="absolute left-1/2 top-1/2 size-[92%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle_at_center,rgba(21,159,255,0.28)_0%,rgba(177,140,255,0.18)_40%,transparent_70%)] blur-[70px]" />
 
-      <motion.div className="absolute inset-0 [transform-style:preserve-3d]" style={{ rotateX: sx, rotateY: sy }}>
-        <div className="absolute inset-0 [transform-style:preserve-3d] [transform:rotateX(62deg)_rotateZ(-40deg)_translateZ(-70px)]">
-          {PLATES.map((p, i) => (
-            <motion.div
-              key={p.label}
-              className="absolute left-[12%] top-[12%] h-[76%] w-[76%] [transform-style:preserve-3d]"
-              initial={reduce ? false : { z: p.z - 140, opacity: 0 }}
-              animate={reduce ? { z: p.z, opacity: 1 } : { z: [p.z, p.z + 12, p.z], opacity: 1 }}
-              transition={{
-                opacity: { duration: 0.9, delay: 0.5 + i * 0.12 },
-                z: reduce
-                  ? undefined
-                  : { duration: 6 + i, repeat: Infinity, ease: "easeInOut", delay: 1.2 + i * 0.3 },
-              }}
-            >
-              <div
-                className={`absolute inset-0 rounded-[1.4rem] border border-sky/35 bg-gradient-to-br ${p.tone} shadow-[0_0_40px_-8px_rgba(21,159,255,0.55),inset_0_0_30px_rgba(135,216,255,0.12)]`}
-              >
-                <div className="tech-grid absolute inset-0 rounded-[1.4rem] opacity-70" />
-                <span className="absolute left-4 top-3 font-mono text-[0.6rem] tracking-[0.2em] text-sky/90">{p.label}</span>
-                <span className="absolute bottom-3 right-4 size-2 rounded-full bg-electric shadow-[0_0_14px_var(--color-electric)]" />
-                {i === PLATES.length - 1 && (
-                  <>
-                    <div className="absolute left-1/2 top-1/2 size-[34%] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-sky/60 bg-gradient-to-br from-sky/40 to-electric/30 shadow-[0_0_50px_rgba(21,159,255,0.8)]" />
-                    <div className="absolute left-1/2 top-1/2 size-[56%] -translate-x-1/2 -translate-y-1/2 rounded-3xl border border-dashed border-sky/40" />
-                  </>
-                )}
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
+      {/* Cyber Circuit Container */}
+      <div className="absolute inset-0 rounded-[2.5rem] border border-sky/30 bg-gradient-to-br from-[#060b19]/90 via-[#081b38]/85 to-[#0b2452]/70 p-6 shadow-[0_0_60px_-15px_rgba(21,159,255,0.45),inset_0_0_35px_rgba(135,216,255,0.1)] backdrop-blur-xl">
+        {/* Futuristic Grid Overlay */}
+        <div className="tech-grid absolute inset-0 rounded-[2.5rem] opacity-40" />
 
-      {/* floating HUD chips (flat layer for legibility) */}
-      <motion.div
-        className="glass absolute -left-1 top-[14%] hidden rounded-xl px-3 py-2 sm:block"
-        initial={reduce ? false : { opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 1.1, duration: 0.8, ease: EASE }}
-      >
-        <p className="label-mono !text-[0.62rem]">Client work</p>
-        <p className="text-xs font-medium text-white">Open for project inquiries</p>
-      </motion.div>
-      <motion.div
-        className="glass absolute -right-1 bottom-[20%] hidden rounded-xl px-3 py-2 sm:block"
-        initial={reduce ? false : { opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 1.3, duration: 0.8, ease: EASE }}
-      >
-        <p className="label-mono !text-[0.62rem]">Flagship product</p>
-        <p className="flex items-center gap-2 text-xs font-medium text-white">
-          <span className="size-1.5 animate-pulse-dot rounded-full bg-electric" /> BILLINGHACKS · in development
-        </p>
-      </motion.div>
+        {/* Orbit Rings */}
+        <div className="absolute left-1/2 top-1/2 size-[76%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-sky/20 border-dashed animate-[spin_45s_linear_infinite]" />
+        <div className="absolute left-1/2 top-1/2 size-[54%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-electric/30 animate-[spin_25s_linear_infinite_reverse]" />
+
+        {/* Central Core Sphere */}
+        <motion.div
+          className="absolute left-1/2 top-1/2 flex size-32 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-sky/60 bg-gradient-to-b from-sky/20 to-electric/40 text-center shadow-[0_0_35px_rgba(21,159,255,0.8),inset_0_0_20px_rgba(255,255,255,0.3)] backdrop-blur-md"
+          animate={reduce ? undefined : { scale: [1, 1.05, 1] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <span className="font-mono text-[0.62rem] font-bold uppercase tracking-widest text-sky">CORE ENGINE</span>
+          <span className="font-display text-sm font-extrabold uppercase tracking-tight text-white">CODISTACK</span>
+          <span className="mt-1 inline-flex items-center gap-1 font-mono text-[0.55rem] text-emerald-300">
+            <span className="size-1.5 rounded-full bg-emerald-400 animate-ping" />
+            OPERATIONAL
+          </span>
+        </motion.div>
+
+        {/* 4 Telemetry Nodes */}
+        {TELEMETRY_NODES.map((node, i) => (
+          <motion.div
+            key={node.id}
+            className={`absolute ${node.pos} max-w-[130px] rounded-xl border p-2.5 backdrop-blur-md transition-all sm:max-w-[155px] ${
+              pulse === i ? "border-sky bg-sky/20 shadow-[0_0_20px_rgba(21,159,255,0.5)]" : "border-sky/20 bg-base/80"
+            }`}
+            initial={reduce ? false : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 + i * 0.1 }}
+          >
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-[0.55rem] text-slate-400">{node.id} // SYS</span>
+              <span className={`rounded-full px-1.5 py-0.5 font-mono text-[0.52rem] font-bold ${node.accent}`}>
+                {node.status}
+              </span>
+            </div>
+            <p className="mt-1.5 font-display text-xs font-bold leading-tight text-white">{node.name}</p>
+            <p className="mt-0.5 font-mono text-[0.6rem] text-sky">{node.metric}</p>
+          </motion.div>
+        ))}
+
+        {/* Live scanning bar across the canvas */}
+        <motion.div
+          className="absolute inset-x-8 h-[2px] bg-gradient-to-r from-transparent via-sky to-transparent"
+          animate={reduce ? undefined : { top: ["15%", "85%", "15%"] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+        />
+      </div>
     </div>
   );
 }
 
 export function Hero() {
-  const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const gridY = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : 120]);
-  const stackY = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : -60]);
-  const fade = useTransform(scrollYProgress, [0, 0.8], [1, reduce ? 1 : 0.2]);
 
   return (
-    <section id="home" ref={ref} className="relative isolate flex min-h-[100svh] items-center overflow-hidden pb-16 pt-32 sm:pt-36">
-      {/* atmosphere */}
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(1100px_600px_at_75%_30%,rgba(11,36,82,0.95),transparent_70%),radial-gradient(900px_500px_at_10%_0%,rgba(21,159,255,0.18),transparent_60%),linear-gradient(180deg,#060b19,#081b38_70%,#060b19)]" />
-      <div className="tech-grid absolute inset-0 -z-10 opacity-60" />
-      <motion.div className="absolute inset-0 -z-10" style={{ y: gridY }}>
-        <div className="cyber-grid-floor" />
-      </motion.div>
-      <div className="absolute inset-0 -z-10 overflow-hidden" aria-hidden>
-        <div className="light-trail top-[22%] [animation-delay:0s]" />
-        <div className="light-trail top-[41%] w-[26%] [animation-delay:2.6s]" />
-        <div className="light-trail top-[63%] w-[32%] [animation-delay:4.8s]" />
-        <div className="scan-line" />
-      </div>
-      <div className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-base to-transparent" />
+    <section
+      id="home"
+      aria-labelledby="hero-title"
+      className="relative isolate overflow-hidden pb-16 pt-32 sm:pb-24 sm:pt-40 lg:pb-32"
+    >
+      {/* Ambient background atmosphere */}
+      <div
+        className="absolute inset-0 -z-20 bg-[radial-gradient(1100px_600px_at_50%_-10%,#0b2452_0%,#081b38_45%,#060b19_85%)]"
+        aria-hidden="true"
+      />
+      <div
+        className="tech-grid absolute inset-0 -z-10 opacity-30"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute inset-x-0 bottom-0 -z-10 h-36 bg-gradient-to-t from-base to-transparent"
+        aria-hidden="true"
+      />
 
-      <motion.div className="container-x grid items-center gap-10 lg:grid-cols-12 lg:gap-6" style={{ opacity: fade }}>
-        <div className="lg:col-span-7">
-          <motion.p
-            initial={reduce ? false : { opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: EASE }}
-            className="glass inline-flex max-w-full items-center gap-2.5 rounded-full px-4 py-2"
-          >
-            <span className="size-2 shrink-0 animate-pulse-dot rounded-full bg-electric" />
-            <span className="label-mono !text-[0.66rem] sm:!text-[0.72rem]">Software · SaaS · AI — built in India</span>
-          </motion.p>
+      <div className="container-x">
+        <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-8">
+          {/* Headline & Value Proposition */}
+          <div className="lg:col-span-7">
+            <motion.div
+              initial={reduce ? false : { opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: EASE }}
+            >
+              <div className="inline-flex items-center gap-2.5 rounded-full border border-sky/30 bg-sky/10 px-3.5 py-1.5 backdrop-blur-md">
+                <span className="relative flex size-2">
+                  <span className="absolute inline-flex size-full animate-ping rounded-full bg-electric opacity-75" />
+                  <span className="relative inline-flex size-2 rounded-full bg-sky" />
+                </span>
+                <span className="font-mono text-xs font-semibold tracking-wider text-sky uppercase">
+                  ENTERPRISE ARCHITECTURE // INDIA & GLOBAL
+                </span>
+              </div>
+            </motion.div>
 
-          <h1 className="glitch-once mt-7 text-[clamp(2.6rem,9vw,6.1rem)] font-bold uppercase leading-[0.95]" aria-label="Engineering what's next.">
-            {[
-              { words: ["Engineering"], cls: "text-white" },
-              { words: ["what's", "next."], cls: "" },
-            ].map((line, li) => (
-              <span key={li} className="block" aria-hidden>
-                {line.words.map((w, wi) => (
-                  <span key={w} className="mr-[0.22em] inline-block overflow-hidden pb-[0.1em] align-bottom">
-                    <motion.span
-                      className={`inline-block ${li === 1 && wi === 1 ? "chrome drop-shadow-[0_0_28px_rgba(21,159,255,0.55)]" : line.cls}`}
-                      initial={reduce ? false : { y: "110%" }}
-                      animate={{ y: 0 }}
-                      transition={{ duration: 0.9, delay: 0.25 + li * 0.15 + wi * 0.1, ease: EASE }}
-                    >
-                      {w}
-                    </motion.span>
-                  </span>
-                ))}
+            <motion.h1
+              id="hero-title"
+              className="mt-6 font-display text-[clamp(2.5rem,7vw,5.2rem)] font-extrabold uppercase leading-[0.98] tracking-[-0.03em] text-white"
+              initial={reduce ? false : { opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.15, ease: EASE }}
+            >
+              Engineering <br />
+              <span className="bg-gradient-to-r from-sky via-electric to-violet bg-clip-text text-transparent">
+                What&apos;s Next.
               </span>
-            ))}
-          </h1>
+            </motion.h1>
 
-          <motion.p
-            initial={reduce ? false : { opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8, ease: EASE }}
-            className="mt-7 max-w-xl text-base leading-relaxed text-slate-300 sm:text-lg"
-          >
-            We build powerful software products, intelligent digital systems, and modern technology solutions for
-            businesses ready to move forward.
-          </motion.p>
+            <motion.p
+              className="mt-6 max-w-xl text-base leading-relaxed text-slate-300 sm:text-lg sm:leading-relaxed"
+              initial={reduce ? false : { opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3, ease: EASE }}
+            >
+              Codistack builds enterprise-grade SaaS platforms, ultra-fast web and mobile apps, and distributed custom software systems designed for zero-downtime scale — alongside{" "}
+              <span className="font-semibold text-white">BILLINGHACKS Business OS</span>, our flagship proprietary platform.
+            </motion.p>
 
-          <motion.div
-            initial={reduce ? false : { opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1, ease: EASE }}
-            className="mt-9 flex flex-col gap-3 sm:flex-row"
-          >
-            <Link href="/early-access" className="btn btn-primary">
-              Join Early Access <ArrowRight />
-            </Link>
-            <Link href="/#contact" className="btn btn-secondary">
-              Start a Project
-            </Link>
-          </motion.div>
+            {/* High-conversion CTA Action Group */}
+            <motion.div
+              className="mt-9 flex flex-wrap items-center gap-4"
+              initial={reduce ? false : { opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.45, ease: EASE }}
+            >
+              <Link
+                href="/#contact"
+                className="btn btn-primary group relative inline-flex items-center gap-2 !px-7 !py-3.5 text-base shadow-[0_0_30px_-5px_rgba(21,159,255,0.7)]"
+              >
+                <span>Request Consultation</span>
+                <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+              <Link
+                href="/early-access"
+                className="btn btn-secondary inline-flex items-center gap-2 !px-6 !py-3.5 text-base border-sky/30 hover:border-sky/60"
+              >
+                <span>Join BILLINGHACKS Waitlist</span>
+                <span className="rounded-full bg-violet/20 px-2 py-0.5 font-mono text-[0.65rem] font-bold text-violet">
+                  BETA
+                </span>
+              </Link>
+            </motion.div>
 
-          <motion.p
-            initial={reduce ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.3, duration: 0.8 }}
-            className="mt-6 font-mono text-[0.7rem] leading-relaxed tracking-wide text-slate-400"
-          >
-            Early Access = BILLINGHACKS beta waiting list. Free to join, no payment, no guaranteed access.
-          </motion.p>
+            {/* Technical Capability Badges */}
+            <motion.div
+              className="mt-12 grid grid-cols-2 gap-4 border-t border-sky/15 pt-7 sm:grid-cols-4 sm:gap-6"
+              initial={reduce ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.9, delay: 0.6 }}
+            >
+              <div>
+                <p className="font-display text-2xl font-black text-white sm:text-3xl">99.99%</p>
+                <p className="mt-1 font-mono text-[0.68rem] uppercase tracking-wider text-slate-400">Target Uptime</p>
+              </div>
+              <div>
+                <p className="font-display text-2xl font-black text-white sm:text-3xl">&lt; 30ms</p>
+                <p className="mt-1 font-mono text-[0.68rem] uppercase tracking-wider text-slate-400">Global Edge TTFB</p>
+              </div>
+              <div>
+                <p className="font-display text-2xl font-black text-white sm:text-3xl">Zero-Trust</p>
+                <p className="mt-1 font-mono text-[0.68rem] uppercase tracking-wider text-slate-400">Security Architecture</p>
+              </div>
+              <div>
+                <p className="font-display text-2xl font-black text-white sm:text-3xl">Multi-Tenant</p>
+                <p className="mt-1 font-mono text-[0.68rem] uppercase tracking-wider text-slate-400">SaaS Ready</p>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Redesigned Cyber Architecture Canvas */}
+          <div className="lg:col-span-5">
+            <CyberArchitectureCanvas />
+          </div>
         </div>
-
-        <motion.div className="lg:col-span-5" style={{ y: stackY }}>
-          <GlassStack />
-        </motion.div>
-      </motion.div>
+      </div>
     </section>
   );
 }
