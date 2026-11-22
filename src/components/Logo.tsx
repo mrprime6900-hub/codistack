@@ -40,6 +40,7 @@ export function Logo({
       width={width}
       height={height}
       priority={priority}
+      unoptimized
       style={{ height, width: "auto" }}
     />
   );
