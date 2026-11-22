@@ -49,9 +49,4 @@ const headersContent = `/*
 `;
 fs.writeFileSync(path.join(dist, "_headers"), headersContent, "utf8");
 
-// 6. Ensure Cloudflare Pages Functions are also available at dist/functions if needed
-if (fs.existsSync("functions")) {
-  fs.cpSync("functions", path.join(dist, "functions"), { recursive: true });
-}
-
 console.log("Successfully prepared Cloudflare Pages distribution in /dist");
