@@ -1,0 +1,36 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js build
+/.next/
+/out/
+
+# production
+/build
+
+# environment variables & secrets (NEVER commit secrets!)
+.env
+.env*.local
+
+# debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# system & IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# typescript
+*.tsbuildinfo
+
+# cloudflare opennext build
+/.open-next/
