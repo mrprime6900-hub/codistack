@@ -34,3 +34,4 @@ Thumbs.db
 
 # cloudflare opennext build
 /.open-next/
+/dist/
